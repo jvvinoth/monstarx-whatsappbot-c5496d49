@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { siteContent } from "@/lib/siteContent";
 import {
   MessageSquare,
@@ -64,6 +65,7 @@ export default function Home() {
             </a>
           </nav>
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <Button variant="ghost" className="hidden md:inline-flex">
               Sign In
             </Button>
@@ -215,24 +217,19 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="flex flex-wrap justify-center items-center gap-12 md:gap-16">
+          <div className="flex flex-wrap justify-center items-center gap-12">
             {integrations.logos.map((logo, idx) => (
               <div
                 key={idx}
-                className="flex flex-col items-center gap-3 opacity-70 hover:opacity-100 transition-opacity"
+                className="flex items-center justify-center grayscale hover:grayscale-0 transition-all opacity-60 hover:opacity-100"
               >
-                <div className="h-16 w-16 flex items-center justify-center">
-                  <Image
-                    src={logo.image}
-                    alt={logo.name}
-                    width={64}
-                    height={64}
-                    className="w-auto h-12"
-                  />
-                </div>
-                <span className="text-sm font-medium text-muted-foreground">
-                  {logo.name}
-                </span>
+                <Image
+                  src={logo.image}
+                  alt={logo.name}
+                  width={120}
+                  height={60}
+                  className="h-12 w-auto"
+                />
               </div>
             ))}
           </div>
@@ -251,7 +248,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {pricing.tiers.map((tier, idx) => (
               <Card
                 key={idx}
@@ -263,7 +260,9 @@ export default function Home() {
               >
                 {tier.highlighted && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-primary">Most Popular</Badge>
+                    <Badge className="bg-primary text-primary-foreground">
+                      Most Popular
+                    </Badge>
                   </div>
                 )}
                 <CardHeader>
@@ -271,7 +270,9 @@ export default function Home() {
                   <CardDescription>{tier.description}</CardDescription>
                   <div className="mt-4">
                     <span className="text-4xl font-bold font-mono">{tier.price}</span>
-                    <span className="text-muted-foreground">{tier.period}</span>
+                    {tier.period && (
+                      <span className="text-muted-foreground">{tier.period}</span>
+                    )}
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -280,6 +281,15 @@ export default function Home() {
                       <li key={featureIdx} className="flex items-start gap-2">
                         <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                         <span className="text-sm">{feature}</span>
+                      </li>
+                    ))}
+                    {tier.notIncluded.map((feature, featureIdx) => (
+                      <li
+                        key={`not-${featureIdx}`}
+                        className="flex items-start gap-2 text-muted-foreground"
+                      >
+                        <span className="h-5 w-5 shrink-0 mt-0.5">×</span>
+                        <span className="text-sm line-through">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -299,30 +309,28 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Demo/CTA Section */}
+      {/* Demo CTA Section */}
       <section id="demo" className="py-20 md:py-32 border-b">
         <div className="container px-4 md:px-8">
-          <div className="relative overflow-hidden rounded-2xl border">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-primary/5" />
-            <div className="relative grid lg:grid-cols-2 gap-12 items-center p-8 md:p-16">
+          <div className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/10 via-background to-primary/5">
+            <div className="grid lg:grid-cols-2 gap-12 items-center p-8 md:p-16">
               <div className="space-y-6">
                 <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
                   {demo.headline}
                 </h2>
-                <p className="text-xl text-muted-foreground">
-                  {demo.subheadline}
-                </p>
+                <p className="text-lg text-muted-foreground">{demo.subheadline}</p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button size="lg">
+                  <Button size="lg" className="text-lg">
                     {demo.primaryCTA} <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
-                  <Button size="lg" variant="outline">
+                  <Button size="lg" variant="outline" className="text-lg">
                     {demo.secondaryCTA}
                   </Button>
                 </div>
               </div>
               <div className="relative">
-                <div className="rounded-lg overflow-hidden border shadow-xl">
+                <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-primary/10 blur-3xl" />
+                <div className="relative rounded-lg overflow-hidden border shadow-xl">
                   <Image
                     src={demo.image.src}
                     alt={demo.image.alt}
@@ -341,7 +349,7 @@ export default function Home() {
       <section id="contact" className="py-20 md:py-32 bg-muted/50">
         <div className="container px-4 md:px-8">
           <div className="max-w-4xl mx-auto">
-            <div className="text-center space-y-4 mb-12">
+            <div className="text-center space-y-4 mb-16">
               <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
                 {contact.headline}
               </h2>
@@ -350,72 +358,57 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8">
-              <Card className="border-2">
-                <CardHeader>
-                  <CardTitle>Contact Information</CardTitle>
-                  <CardDescription>
-                    Reach out to us directly or fill out the form
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-2">
+            <div className="grid md:grid-cols-2 gap-12">
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold">Contact Information</h3>
+                  <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <Mail className="h-5 w-5 text-primary" />
-                      <div>
-                        <div className="font-medium">Email</div>
-                        <a
-                          href={`mailto:${contact.email}`}
-                          className="text-sm text-muted-foreground hover:text-primary"
-                        >
-                          {contact.email}
-                        </a>
-                      </div>
+                      <a
+                        href={`mailto:${contact.email}`}
+                        className="hover:text-primary transition-colors"
+                      >
+                        {contact.email}
+                      </a>
                     </div>
-                  </div>
-
-                  <div className="space-y-2">
                     <div className="flex items-center gap-3">
                       <MessageSquare className="h-5 w-5 text-primary" />
-                      <div>
-                        <div className="font-medium">WhatsApp</div>
-                        <a
-                          href={`https://wa.me/${contact.phone.replace(/\+/g, "")}`}
-                          className="text-sm text-muted-foreground hover:text-primary"
-                        >
-                          {contact.phone}
-                        </a>
-                      </div>
+                      <a
+                        href={`tel:${contact.phone}`}
+                        className="hover:text-primary transition-colors"
+                      >
+                        {contact.phone}
+                      </a>
                     </div>
                   </div>
+                </div>
 
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <Globe className="h-5 w-5 text-primary" />
-                      <div>
-                        <div className="font-medium">Serving</div>
-                        <div className="text-sm text-muted-foreground">
-                          {contact.locations.join(", ")}
-                        </div>
-                      </div>
-                    </div>
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold">Locations</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {contact.locations.map((location, idx) => (
+                      <Badge key={idx} variant="secondary">
+                        {location}
+                      </Badge>
+                    ))}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               <Card className="border-2">
                 <CardHeader>
-                  <CardTitle>Send us a Message</CardTitle>
+                  <CardTitle>Send us a message</CardTitle>
                   <CardDescription>
-                    We'll get back to you within 24 hours
+                    Fill out the form and we'll get back to you shortly.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <form
+                    className="space-y-4"
                     action={`mailto:${contact.email}`}
                     method="post"
                     encType="text/plain"
-                    className="space-y-4"
                   >
                     <div className="space-y-2">
                       <Input
@@ -463,17 +456,12 @@ export default function Home() {
       <footer className="border-t bg-background">
         <div className="container px-4 py-12 md:px-8 md:py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-            <div className="col-span-2">
+            <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-2 mb-4">
                 <MessageSquare className="h-6 w-6" />
-                <span className="font-bold text-xl font-mono">MonstarX WhatsAppBot</span>
+                <span className="font-bold text-lg font-mono">MonstarX</span>
               </div>
-              <p className="text-sm text-muted-foreground max-w-xs mb-4">
-                {footer.tagline}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {footer.locations}
-              </p>
+              <p className="text-sm text-muted-foreground">{footer.tagline}</p>
             </div>
 
             <div>
@@ -507,23 +495,29 @@ export default function Home() {
                 ))}
               </ul>
             </div>
+
+            <div>
+              <h4 className="font-semibold mb-4">{footer.legal.title}</h4>
+              <ul className="space-y-2">
+                {footer.legal.links.map((link, idx) => (
+                  <li key={idx}>
+                    <a
+                      href={link.href}
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           <Separator className="mb-8" />
 
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-muted-foreground">{footer.copyright}</p>
-            <div className="flex gap-6">
-              {footer.legal.links.map((link, idx) => (
-                <a
-                  key={idx}
-                  href={link.href}
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  {link.label}
-                </a>
-              ))}
-            </div>
+            <p className="text-sm text-muted-foreground">{footer.locations}</p>
           </div>
         </div>
       </footer>
